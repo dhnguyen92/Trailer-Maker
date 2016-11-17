@@ -1,0 +1,6 @@
+*.mp4
+*.avi
+*.db
+*.jpg
+__pycache__/
+.vscode/
