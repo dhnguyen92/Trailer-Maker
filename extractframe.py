@@ -2,7 +2,6 @@
 import argparse
 import cv2
 from moviebox import find_box
-from rgbhistogram import RGBHistogram
 
 # construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
