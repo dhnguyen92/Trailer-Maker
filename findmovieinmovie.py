@@ -28,9 +28,7 @@ else:
 print("Done")
 
 movie_searcher = Searcher(movie_index)
-	# results = searcher.search(queryFeatures)
-
-interval = 1
+# results = searcher.search(queryFeatures)
 
 trailer_cap = cv2.VideoCapture(args["trailer"])
 movie_cap = cv2.VideoCapture(args["movie"])
@@ -41,33 +39,35 @@ x, y, w, h = find_box(args["trailer"])
 desc = RGBHistogram([8, 8, 8])
 mapping = []
 threshold = 0.1
+interval = 0.5*fps
 skip_duration = float(args["skip"])
 
-for i in range(length//(fps*interval)):
-	trailer_cap.set(1, i*fps*interval)
+for i in range(int(length/interval)):
+	cur_frame_pos = round(i*interval)
+	trailer_cap.set(1, cur_frame_pos)
 	ret, frame = trailer_cap.read()
 	if ret:
 		features = desc.describe(frame[y:y+h, x:x+w])
 
 		results = [(1, 0)]
-		print("Searching for frame "+str(i*fps*interval))
-		if i > 0 and mapping[i-1] != -1:
-			results = movie_searcher.search(features, skip_duration, mapping[i-1], mapping[i-1]+2*movie_searcher.getFPS()*interval)
+		print("Searching for frame "+str(cur_frame_pos))
+		# if i > 0 and mapping[i-1] != -1:
+		# 	results = movie_searcher.search(features, skip_duration, mapping[i-1], mapping[i-1]+2*movie_searcher.getFPS()*interval)
 
-		if results[0][0] > threshold:
-			results = movie_searcher.search(features, skip_duration)
-		else:
-			print('hit')
+		# if results[0][0] > threshold:
+		results = movie_searcher.search(features, skip_duration)
+		# else:
+		# 	print('hit')
 
 		if results[0][0] < threshold:
 			mapping.append(results[0][1])
-			print(results[0])
-			cv2.imwrite("frame_"+str(i*fps*interval)+".jpg", frame[y:y+h, x:x+w])
-			movie_cap.set(1, int(results[0][1]))
-			ret, frame = movie_cap.read()
-			cv2.imwrite("frame_"+str(i*fps*interval)+"_matched.jpg", frame)
 		else:
 			mapping.append(-1)
-			print("No match found")
+
+		print(results[0])
+		cv2.imwrite("frame_"+str(cur_frame_pos)+".jpg", frame[y:y+h, x:x+w])
+		movie_cap.set(1, int(results[0][1]))
+		ret, frame = movie_cap.read()
+		cv2.imwrite("frame_"+str(cur_frame_pos)+"_matched.jpg", frame)
 
 print(mapping)

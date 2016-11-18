@@ -1,6 +1,6 @@
 import cv2
 
-NUM_REGION = 3;
+NUM_REGION = 3
 
 class RGBHistogram:
 	def __init__(self, bins):
@@ -15,10 +15,12 @@ class RGBHistogram:
 		width = image.shape[1]
 		height = image.shape[0]
 		result = []
+		image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 		for i in range(0, NUM_REGION):
 			for j in range(0, NUM_REGION):
-				hist = cv2.calcHist([image[i*height//NUM_REGION:(i+1)*height//NUM_REGION, j*width//NUM_REGION:(j+1)*width//NUM_REGION]], [0, 1, 2], None, self.bins, [0, 256, 0, 256, 0, 256])
+				hist = cv2.calcHist([image[i*height//NUM_REGION:(i+1)*height//NUM_REGION, j*width//NUM_REGION:(j+1)*width//NUM_REGION]], [0], None, [128], [0, 256])
+				# hist = cv2.calcHist([image[i*height//NUM_REGION:(i+1)*height//NUM_REGION, j*width//NUM_REGION:(j+1)*width//NUM_REGION]], [0, 1, 2], None, [16, 16, 16], [0, 256, 0, 256, 0, 256])
 				cv2.normalize(hist, hist)
 				result.append(hist.flatten())
 

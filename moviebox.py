@@ -11,7 +11,7 @@ def find_box(input_file):
 	w = []
 	h = []
 
-	for i in range(MAX_BLACK_CHECK):
+	for i in range(5,5+MAX_BLACK_CHECK):
 		cap.set(1, i*fps)
 		_, frame = cap.read(1)
 
